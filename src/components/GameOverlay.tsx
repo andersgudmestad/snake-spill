@@ -1,13 +1,18 @@
-import type { GameStatus, GameStats } from '../types/game';
+import { useState } from 'react';
+import type { GameStatus, GameStats, Difficulty } from '../types/game';
 
 interface Props {
   status: GameStatus;
   score: number;
   highScore: number;
   stats: GameStats;
+  difficulty: Difficulty;
+  qualifiesForTopTen: (score: number, difficulty: Difficulty) => boolean;
   onStart: () => void;
   onResume: () => void;
   onRestart: () => void;
+  onSubmitScore: (name: string) => Promise<boolean>;
+  onShowLeaderboard: () => void;
 }
 
 function formatTime(ms: number): string {
@@ -16,8 +21,39 @@ function formatTime(ms: number): string {
   return minutes > 0 ? `${minutes}m ${seconds % 60}s` : `${seconds}s`;
 }
 
-export function GameOverlay({ status, score, highScore, stats, onStart, onResume, onRestart }: Props) {
+export function GameOverlay({
+  status, score, highScore, stats, difficulty,
+  qualifiesForTopTen, onStart, onResume, onRestart,
+  onSubmitScore, onShowLeaderboard,
+}: Props) {
+  const [name, setName] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
   if (status === 'playing') return null;
+
+  const canSubmit = status === 'dead' && !submitted && qualifiesForTopTen(score, difficulty);
+
+  async function handleSubmit() {
+    if (!name.trim()) return;
+    setSubmitting(true);
+    const ok = await onSubmitScore(name.trim());
+    if (ok) setSubmitted(true);
+    setSubmitting(false);
+  }
+
+  // Reset submission state when starting a new game
+  function handleRestart() {
+    setName('');
+    setSubmitted(false);
+    onRestart();
+  }
+
+  function handleStart() {
+    setName('');
+    setSubmitted(false);
+    onStart();
+  }
 
   return (
     <div className="overlay">
@@ -25,7 +61,8 @@ export function GameOverlay({ status, score, highScore, stats, onStart, onResume
         <>
           <div className="overlay-title">🐍 Snake</div>
           <p className="overlay-sub">Bruk piltaster eller WASD</p>
-          <button className="btn-primary" onClick={onStart}>Start spill</button>
+          <button className="btn-primary" onClick={handleStart}>Start spill</button>
+          <button className="btn-secondary" onClick={onShowLeaderboard}>🏆 Toppliste</button>
         </>
       )}
 
@@ -33,7 +70,7 @@ export function GameOverlay({ status, score, highScore, stats, onStart, onResume
         <>
           <div className="overlay-title">Pause</div>
           <button className="btn-primary" onClick={onResume}>Fortsett</button>
-          <button className="btn-secondary" onClick={onRestart}>Start på nytt</button>
+          <button className="btn-secondary" onClick={handleRestart}>Start på nytt</button>
         </>
       )}
 
@@ -60,7 +97,37 @@ export function GameOverlay({ status, score, highScore, stats, onStart, onResume
               </div>
             )}
           </div>
-          <button className="btn-primary" onClick={onRestart}>Prøv igjen</button>
+
+          {canSubmit && (
+            <div className="leaderboard-submit">
+              <p className="leaderboard-submit-label">🏆 Du kvalifiserer til topplisten!</p>
+              <input
+                className="leaderboard-name-input"
+                type="text"
+                placeholder="Ditt navn"
+                maxLength={20}
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              />
+              <button
+                className="btn-primary"
+                onClick={handleSubmit}
+                disabled={submitting || !name.trim()}
+              >
+                {submitting ? 'Lagrer...' : 'Lagre til toppliste'}
+              </button>
+            </div>
+          )}
+
+          {submitted && (
+            <div className="leaderboard-submitted">
+              <p className="leaderboard-submit-label">✅ Score lagret!</p>
+              <button className="btn-secondary" onClick={onShowLeaderboard}>Se topplisten</button>
+            </div>
+          )}
+
+          <button className="btn-primary" onClick={handleRestart}>Prøv igjen</button>
         </>
       )}
     </div>

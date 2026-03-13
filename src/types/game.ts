@@ -59,6 +59,14 @@ export interface GameActions {
   changeDirection: (d: Direction) => void;
 }
 
+export interface LeaderboardEntry {
+  id: string;
+  player_name: string;
+  score: number;
+  difficulty: Difficulty;
+  created_at: string;
+}
+
 export interface DrawConfig {
   ctx: CanvasRenderingContext2D;
   state: GameState;

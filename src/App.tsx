@@ -1,14 +1,24 @@
+import { useState } from 'react';
 import { useSnakeGame } from './hooks/useSnakeGame';
 import { useTouchDevice } from './hooks/useTouchDevice';
+import { useLeaderboard } from './hooks/useLeaderboard';
 import { GameCanvas } from './components/GameCanvas';
 import { GameOverlay } from './components/GameOverlay';
 import { ScoreBoard } from './components/ScoreBoard';
 import { DifficultySelector } from './components/DifficultySelector';
 import { MobileControls } from './components/MobileControls';
 import { PowerUpIndicator } from './components/PowerUpIndicator';
+import { Leaderboard } from './components/Leaderboard';
+
 export default function App() {
   const game = useSnakeGame();
   const isTouch = useTouchDevice();
+  const { topTen, loading, qualifiesForTopTen, submitScore } = useLeaderboard();
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+
+  async function handleSubmitScore(name: string) {
+    return submitScore(name, game.score, game.difficulty);
+  }
 
   return (
     <div className="app">
@@ -29,9 +39,13 @@ export default function App() {
           score={game.score}
           highScore={game.highScore}
           stats={game.stats}
+          difficulty={game.difficulty}
+          qualifiesForTopTen={qualifiesForTopTen}
           onStart={game.start}
           onResume={game.resume}
           onRestart={game.restart}
+          onSubmitScore={handleSubmitScore}
+          onShowLeaderboard={() => setShowLeaderboard(true)}
         />
       </div>
 
@@ -51,6 +65,14 @@ export default function App() {
       )}
 
       {!isTouch && <p className="hint">Space / Esc = pause &nbsp;|&nbsp; Piltaster / WASD = retning</p>}
+
+      {showLeaderboard && (
+        <Leaderboard
+          topTen={topTen}
+          loading={loading}
+          onClose={() => setShowLeaderboard(false)}
+        />
+      )}
     </div>
   );
 }
