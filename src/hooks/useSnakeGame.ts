@@ -194,6 +194,9 @@ export function useSnakeGame(): GameState & GameActions {
     };
 
     const onKey = (e: KeyboardEvent) => {
+      const tag = (document.activeElement as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
       const dir = keyMap[e.key];
       if (dir) {
         e.preventDefault();
