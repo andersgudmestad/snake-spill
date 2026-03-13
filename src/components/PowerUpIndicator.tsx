@@ -15,7 +15,7 @@ export function PowerUpIndicator({ activeEffect }: Props) {
     return () => clearInterval(interval);
   }, [activeEffect]);
 
-  if (!activeEffect) return <div className="power-up-indicator-placeholder" />;
+  if (!activeEffect) return null;
 
   const secondsLeft = Math.max(0, Math.ceil((activeEffect.endsAt - Date.now()) / 1000));
   const color = POWER_UP_COLORS[activeEffect.type];

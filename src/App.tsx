@@ -6,8 +6,6 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { DifficultySelector } from './components/DifficultySelector';
 import { MobileControls } from './components/MobileControls';
 import { PowerUpIndicator } from './components/PowerUpIndicator';
-import { CANVAS_SIZE } from './constants/game';
-
 export default function App() {
   const game = useSnakeGame();
   const isTouch = useTouchDevice();
@@ -24,7 +22,7 @@ export default function App() {
 
       <PowerUpIndicator activeEffect={game.activeEffect} />
 
-      <div className="game-wrapper" style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+      <div className="game-wrapper">
         <GameCanvas state={game} />
         <GameOverlay
           status={game.status}

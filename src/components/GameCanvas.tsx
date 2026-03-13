@@ -63,9 +63,6 @@ export function GameCanvas({ state }: Props) {
     const dpr = window.devicePixelRatio || 1;
     canvas.width = CANVAS_SIZE * dpr;
     canvas.height = CANVAS_SIZE * dpr;
-    canvas.style.width = `${CANVAS_SIZE}px`;
-    canvas.style.height = `${CANVAS_SIZE}px`;
-
     const ctx = canvas.getContext('2d');
     if (ctx) ctx.scale(dpr, dpr);
 
