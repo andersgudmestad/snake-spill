@@ -172,6 +172,14 @@ body {
   color: #e0e0e0;
 }
 
+/* Mobile controls wrapper */
+.mobile-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 /* D-pad mobile controls */
 .dpad {
   display: flex;
@@ -179,6 +187,7 @@ body {
   align-items: center;
   gap: 4px;
   user-select: none;
+  touch-action: none;
 }
 
 .dpad-row {
@@ -188,8 +197,8 @@ body {
 }
 
 .dpad-btn {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   background: #0f3460;
   border: none;
   border-radius: 8px;
@@ -208,9 +217,26 @@ body {
   transform: scale(0.93);
 }
 
+.pause-btn {
+  padding: 8px 24px;
+  background: #0f3460;
+  border: none;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: background 0.1s;
+}
+
+.pause-btn:active {
+  background: #e94560;
+}
+
 .dpad-center {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
 }
 
 /* Hint text */

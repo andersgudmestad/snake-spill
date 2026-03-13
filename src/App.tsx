@@ -1,4 +1,5 @@
 import { useSnakeGame } from './hooks/useSnakeGame';
+import { useTouchDevice } from './hooks/useTouchDevice';
 import { GameCanvas } from './components/GameCanvas';
 import { GameOverlay } from './components/GameOverlay';
 import { ScoreBoard } from './components/ScoreBoard';
@@ -9,6 +10,7 @@ import { CANVAS_SIZE } from './constants/game';
 
 export default function App() {
   const game = useSnakeGame();
+  const isTouch = useTouchDevice();
 
   return (
     <div className="app">
@@ -41,9 +43,16 @@ export default function App() {
         disabled={game.status === 'playing'}
       />
 
-      <MobileControls onDirection={game.changeDirection} />
+      {isTouch && (
+        <MobileControls
+          onDirection={game.changeDirection}
+          onPause={game.pause}
+          onResume={game.resume}
+          status={game.status}
+        />
+      )}
 
-      <p className="hint">Space / Esc = pause &nbsp;|&nbsp; Piltaster / WASD = retning</p>
+      {!isTouch && <p className="hint">Space / Esc = pause &nbsp;|&nbsp; Piltaster / WASD = retning</p>}
     </div>
   );
 }
