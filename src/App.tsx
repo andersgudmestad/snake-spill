@@ -1,0 +1,49 @@
+import { useSnakeGame } from './hooks/useSnakeGame';
+import { GameCanvas } from './components/GameCanvas';
+import { GameOverlay } from './components/GameOverlay';
+import { ScoreBoard } from './components/ScoreBoard';
+import { DifficultySelector } from './components/DifficultySelector';
+import { MobileControls } from './components/MobileControls';
+import { PowerUpIndicator } from './components/PowerUpIndicator';
+import { CANVAS_SIZE } from './constants/game';
+
+export default function App() {
+  const game = useSnakeGame();
+
+  return (
+    <div className="app">
+      <h1 className="app-title">Snake</h1>
+
+      <ScoreBoard
+        score={game.score}
+        highScore={game.highScore}
+        difficulty={game.difficulty}
+      />
+
+      <PowerUpIndicator activeEffect={game.activeEffect} />
+
+      <div className="game-wrapper" style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+        <GameCanvas state={game} />
+        <GameOverlay
+          status={game.status}
+          score={game.score}
+          highScore={game.highScore}
+          stats={game.stats}
+          onStart={game.start}
+          onResume={game.resume}
+          onRestart={game.restart}
+        />
+      </div>
+
+      <DifficultySelector
+        value={game.difficulty}
+        onChange={game.setDifficulty}
+        disabled={game.status === 'playing'}
+      />
+
+      <MobileControls onDirection={game.changeDirection} />
+
+      <p className="hint">Space / Esc = pause &nbsp;|&nbsp; Piltaster / WASD = retning</p>
+    </div>
+  );
+}
